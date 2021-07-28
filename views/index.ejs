@@ -1,9 +1,32 @@
 <html>
-    <head>
-        <link rel="stylesheet" href="stylesheets/kalture-theme.css">
-        <link rel="stylesheet" href="stylesheets/style.css">
-    </head>
-    <body>
-        Kaltura Node Template
-    </body>
+
+<head>
+    <link rel="stylesheet" href="stylesheets/kaltura-theme.css">
+    <link rel="stylesheet" href="stylesheets/style.css">
+</head>
+
+<body>
+    <h1>Kaltura Asset Attachment Example</h1>
+    <br>
+    <h2>Media Asset Example</h2>
+    <form method="POST" action="/" encType="multipart/form-data">
+        Select Entry 'id' from: <a href="https://developer.kaltura.com/console/service/media/action/list">media.list</a>
+        <input name="entryId" type="text"/>
+        <br>
+        <input name="theFile" type="file" />
+        <br>
+        <input type="submit">
+    </form>
+
+    <br>
+    <hr>
+    <br>
+    <h2>Data Entry Example</h2>
+    <form method="POST" action="/data" encType="multipart/form-data">
+        <input name="theFile" type="file" />
+        <input type="submit">
+    </form>
+
+</body>
+
 </html>

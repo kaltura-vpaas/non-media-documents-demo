@@ -1,11 +1,11 @@
 {
-  "name": "kaltura-node-template",
+  "name": "non-media-documents-demo",
   "version": "0.0.1",
   "license": "AGPL-3.0",
   "private": true,
   "scripts": {
     "start": "./bin/www",
-    "dev": "DEBUG=kaltura-node-template:* nodemon --inspect ./bin/www"
+    "dev": "DEBUG=non-media-documents-demo:* nodemon --inspect ./bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -13,8 +13,9 @@
     "dotenv": "^8.2.0",
     "ejs": "~2.6.1",
     "express": "~4.16.1",
+    "express-fileupload": "^1.2.1",
     "http-errors": "~1.6.3",
-    "kaltura-client": "^16.14.0",
+    "kaltura-client": "latest",
     "morgan": "~1.9.1",
     "nodemon": "^2.0.7"
   }
