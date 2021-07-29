@@ -1,5 +1,5 @@
 # Non-Media Attachments in the Kaltura API
-Examples for handling non media files. 
+Examples for creating, uploading and serving non media files in the Kaltura API
 
 An [attachmentAsset](https://developer.kaltura.com/console/service/attachmentAsset) associates a file with an existing [mediaEntry](https://developer.kaltura.com/console/service/media)
 
