@@ -192,7 +192,21 @@ Next a dataEntry is created:
 
 While only the minimal configuration is provided for this example, there are many options to configure a dataEntry at this point via the same call used in this step [data.add](https://developer.kaltura.com/console/service/data/action/add)
 
+Finally, the`dataEntry` is associated with the file uploaded previously and stored via `uploadToken` 
 
+```javascript
+    let resource = new kaltura.objects.UploadedFileTokenResource();
+    resource.token = upToken.id;
+
+    return await kaltura.services.data.addContent(newDataEntry.id, resource)
+        .execute(client)
+        .then(result => {
+            console.log(result);
+            return result;
+        });
+```
+
+The example displays the json returned by data.addContent 
 
 # How you can help (guidelines for contributors) 
 
