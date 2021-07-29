@@ -34,7 +34,7 @@ router.post('/data', async function (req, res, next) {
   try {
     var adminks = await KalturaClientFactory.getKS('', { type: kaltura.enums.SessionType.ADMIN });
     var client = await KalturaClientFactory.getClient(adminks);
-    let json_result = createAndUploadDataEntry(client,req.files.theFile.data);
+    let result = await createAndUploadDataEntry(client,req.files.theFile.data);
 
     res.render('data',{json_result:JSON.stringify(result,null,2) });
 

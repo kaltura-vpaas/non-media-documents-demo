@@ -31,7 +31,168 @@ First, you will need to select an `id` from one of your entries at https://devel
 
 Then choose a file and submit the form. Control is handled by [index.js](https://github.com/kaltura-vpaas/non-media-documents-demo/blob/master/routes/index.js#L24) which passes the form's data to [attachmentAssetExample.js](https://github.com/kaltura-vpaas/non-media-documents-demo/blob/master/lib/attachmentAssetExample.js)
 
-First an [attachmentAsset](https://developer.kaltura.com/console/service/attachmentAsset) is [created](https://github.com/kaltura-vpaas/non-media-documents-demo/blob/master/lib/attachmentAssetExample.js#L5) 
+The first step in uploading most content to the Kaltura API is using the [uploadToken flow](https://developer.kaltura.com/workflows/Ingest_and_Upload_Media) and this approach is used [here](https://github.com/kaltura-vpaas/non-media-documents-demo/blob/master/lib/attachmentAssetExample.js#L5)
+
+```javascript
+async function createAndUploadAsset(client, entryId, fileName, fileData) {
+	  let uploadToken = new kaltura.objects.UploadToken();
+    let upToken = await kaltura.services.uploadToken.add(uploadToken)
+        .execute(client)
+        .then(result => {
+            console.log(result);
+            return result;
+        });
+
+    let resume = false;
+    let finalChunk = true;
+    let resumeAt = -1;
+
+    let uploaded = await kaltura.services.uploadToken.upload(upToken.id, fileData, resume, finalChunk, resumeAt)
+        .execute(client)
+        .then(result => {
+            console.log(result);
+            return result;
+        });
+```
+
+after this code has run, the file has already been uploaded to the [uploadToken](https://developer.kaltura.com/console/service/uploadToken) that was just created. 
+
+Next, an [attachmentAsset](https://developer.kaltura.com/console/service/attachmentAsset) is created
+
+```javascript
+    let attachmentAsset = new kaltura.objects.AttachmentAsset();
+    attachmentAsset.format = kaltura.enums.AttachmentType.TEXT;
+    attachmentAsset.filename = fileName
+    attachmentAsset.title = "title";
+```
+
+The following types are [available](https://developer.kaltura.com/api-docs/General_Objects/Objects/KalturaAttachmentAsset). This example is hardcoded, but be sure to assign the correct type as it will affect the `Content-Type` header of the asset when it is served:
+
+```
+TEXT [1], MEDIA [2], DOCUMENT [3], JSON [4]
+```
+
+At this point, none of the objects (`entryId`, `uploadToken`, `attachmentAsset`) are associated with each other.
+
+The final step is to associate them with each other:
+
+```javascript
+    // https://developer.kaltura.com/console/service/attachmentAsset/action/add
+    return await kaltura.services.attachmentAsset.add(entryId, attachmentAsset)
+        .execute(client)
+        .then(result => {
+            console.log(result);
+            let contentResource = new kaltura.objects.UploadedFileTokenResource();
+            contentResource.token = upToken.id;
+            // https://developer.kaltura.com/console/service/attachmentAsset
+            return kaltura.services.attachmentAsset.setContent(result.id, contentResource)
+                .execute(client)
+                .then(result => {
+                    console.log(result);
+                    return result;
+```
+
+Two API calls happen here. First, [attachmentAsset.add](https://developer.kaltura.com/console/service/attachmentAsset/action/add) is called with the `entryId` supplied by the user and the newly created `attachmentAsset` object which only existed client side in the demo app. After this call, the `attachmentAsset` exists server side and its `id`  is used to associate it with the `uploadToken` in the next call: 
+
+```javascript
+   					let contentResource = new kaltura.objects.UploadedFileTokenResource();
+            contentResource.token = upToken.id;
+            // https://developer.kaltura.com/console/service/attachmentAsset
+            return kaltura.services.attachmentAsset.setContent(result.id, contentResource)
+```
+
+Now all of the objects are associate with each other and ready to be used or persisted. In this example, the `json` result from the [attachmentAsset.setContent](https://developer.kaltura.com/console/service/attachmentAsset/action/setContent) call is returned to the browser to be displayed to the user: 
+
+```json
+{
+  "filename": "x.txt",
+  "title": "title",
+  "format": "1",
+  "status": 2,
+  "id": "1_gbkrguox",
+  "entryId": "1_zuv81cf9",
+  "partnerId": 12345,
+  "version": "1",
+  "size": 27,
+  "tags": "",
+  "fileExt": "noex",
+  "createdAt": 1627518774,
+  "updatedAt": 1627518775,
+  "description": "",
+  "sizeInBytes": "27",
+  "objectType": "KalturaAttachmentAsset"
+}
+```
+
+At this point, you may want to [serve](https://developer.kaltura.com/console/service/attachmentAsset/action/serve) the asset directly, or [list](https://developer.kaltura.com/console/service/attachmentAsset/action/list) all of the assets for a given `entryId` 
+
+Here is the [full list](https://developer.kaltura.com/console/service/attachmentAsset) of api calls related to `attachmentAsset`
+
+- [attachmentAsset.add](https://developer.kaltura.com/console/service/attachmentAsset/action/add)
+- [attachmentAsset.delete](https://developer.kaltura.com/console/service/attachmentAsset/action/delete)
+- [attachmentAsset.get](https://developer.kaltura.com/console/service/attachmentAsset/action/get)
+- [attachmentAsset.getRemotePaths](https://developer.kaltura.com/console/service/attachmentAsset/action/getRemotePaths)
+- [attachmentAsset.getUrl](https://developer.kaltura.com/console/service/attachmentAsset/action/getUrl)
+- [attachmentAsset.list](https://developer.kaltura.com/console/service/attachmentAsset/action/list)
+- [attachmentAsset.serve](https://developer.kaltura.com/console/service/attachmentAsset/action/serve)
+- [attachmentAsset.setContent](https://developer.kaltura.com/console/service/attachmentAsset/action/setContent)
+- [attachmentAsset.update](https://developer.kaltura.com/console/service/attachmentAsset/action/update)
+
+
+
+## Standalone Data Entry
+
+Kaltura's API also has the ability to accept any type of file via a [dataEntry](https://developer.kaltura.com/console/service/data) unlike the previous example, a `dataEntry` is not associated with a `mediaEntry` and there is no UI in the KMC to view these files. It is up to you to implement a user interface to access, edit and serve a `dataEntry`
+
+In the example, use the second form to upload a file and create a `dataEntry`:
+
+<img src="/Users/hunterp/Documents/GitHub/non-media-documents-demo/readme_assets/dataExample.png" alt="dataExample" style="zoom:50%;" />
+
+Control is handled by [index.js](https://github.com/kaltura-vpaas/non-media-documents-demo/blob/master/routes/index.js#L33) which passes the form's data to [dataEntryExample.js](https://github.com/kaltura-vpaas/non-media-documents-demo/blob/master/lib/dataEntryExample.js) 
+
+Exactly like the previous example, the first step in uploading most content to the Kaltura API is using the [uploadToken flow](https://developer.kaltura.com/workflows/Ingest_and_Upload_Media) and this approach is used here:
+
+```javascript
+async function createAndUploadAsset(client, entryId, fileName, fileData) {
+	  let uploadToken = new kaltura.objects.UploadToken();
+    let upToken = await kaltura.services.uploadToken.add(uploadToken)
+        .execute(client)
+        .then(result => {
+            console.log(result);
+            return result;
+        });
+
+    let resume = false;
+    let finalChunk = true;
+    let resumeAt = -1;
+
+    let uploaded = await kaltura.services.uploadToken.upload(upToken.id, fileData, resume, finalChunk, resumeAt)
+        .execute(client)
+        .then(result => {
+            console.log(result);
+            return result;
+        });
+```
+
+after this code has run, the file has already been uploaded to the [uploadToken](https://developer.kaltura.com/console/service/uploadToken) that was just created. 
+
+Next a dataEntry is created:
+
+```javascript
+    let dataEntry = new kaltura.objects.DataEntry();
+    dataEntry.type = kaltura.enums.EntryType.DATA;
+
+    let newDataEntry = await kaltura.services.data.add(dataEntry)
+        .execute(client)
+        .then(result => {
+            console.log(result);
+            return result;
+        });
+```
+
+While only the minimal configuration is provided for this example, there are many options to configure a dataEntry at this point via the same call used in this step [data.add](https://developer.kaltura.com/console/service/data/action/add)
+
+
 
 # How you can help (guidelines for contributors) 
 
