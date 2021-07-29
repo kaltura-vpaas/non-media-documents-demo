@@ -1,13 +1,9 @@
-# Kaltura Node-JS Template
-All the necessary components, and some nice-to-haves to get a node.js app running with the Kaltura  API.
+# Non-Media Attachments
+Examples for handling non media files. 
 
-# Documentation
- This project is a basic node template created using npx express-generator
- Kaltura-specific libraries are included:
+An [attachmentAsset](https://developer.kaltura.com/console/service/attachmentAsset) associates a file with an existing [mediaEntry](https://developer.kaltura.com/console/service/media)
 
-1. "kaltura-client" kaltura node API client in package.json
-2. lib/kalturaClientFactory.js for easy client generation
-3. an ADMIN ks is generated in routes/index.js
+And a [dataEntry](https://developer.kaltura.com/console/service/data) is a standalone object for storing and serving files. 
 
 # How to Run
 1. Copy env.template to .env and fill in your information
@@ -15,7 +11,30 @@ All the necessary components, and some nice-to-haves to get a node.js app runnin
 3. npm run dev for developement
 4. npm start for production
 
+# Documentation
+
+## Attachment Asset
+
+An [attachmentAsset](https://developer.kaltura.com/console/service/attachmentAsset) is an object that is associated with a given [mediaEntry](https://developer.kaltura.com/console/service/media)
+
+In the [KMC](https://kmc.kaltura.com/index.php/kmcng/content/entries/list) attachmentAssets are viewable in the "Related Files" tab of "Entries" The Kaltura system uses attachmentAssets for items like storing captions for a mediaEntry. The API also allows you to store your own files associated with a mediaEntry.
+
+![attachmentAsset](readme_assets/attachmentAsset.png)
+
+
+
+In the demo app, the first section handles attachmentAssets:
+
+![attachmentExample](readme_assets/attachmentExample.png)
+
+First, you will need to select an `id` from one of your entries at https://developer.kaltura.com/console/service/media/action/list
+
+Then choose a file and submit the form. Control is handled by [index.js](https://github.com/kaltura-vpaas/non-media-documents-demo/blob/master/routes/index.js#L24) which passes the form's data to [attachmentAssetExample.js](https://github.com/kaltura-vpaas/non-media-documents-demo/blob/master/lib/attachmentAssetExample.js)
+
+First an [attachmentAsset](https://developer.kaltura.com/console/service/attachmentAsset) is [created](https://github.com/kaltura-vpaas/non-media-documents-demo/blob/master/lib/attachmentAssetExample.js#L5) 
+
 # How you can help (guidelines for contributors) 
+
 Thank you for helping Kaltura grow! If you'd like to contribute please follow these steps:
 * Use the repository issues tracker to report bugs or feature requests
 * Read [Contributing Code to the Kaltura Platform](https://github.com/kaltura/platform-install-packages/blob/master/doc/Contributing-to-the-Kaltura-Platform.md)
