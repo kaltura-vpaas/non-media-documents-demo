@@ -6,10 +6,11 @@ An [attachmentAsset](https://developer.kaltura.com/console/service/attachmentAss
 And a [dataEntry](https://developer.kaltura.com/console/service/data) is a standalone object for storing and serving files. 
 
 # How to Run
-1. Copy env.template to .env and fill in your information
-2. run npm install
-3. npm run dev for developement
-4. npm start for production
+1. Install https://nodejs.org/en/
+2. Copy env.template to .env and fill in your information
+3. run npm install
+4. npm run dev for developement
+5. npm start for production
 
 # Documentation
 
