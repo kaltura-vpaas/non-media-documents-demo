@@ -1,4 +1,4 @@
-# Non-Media Attachments
+# Non-Media Attachments in the Kaltura API
 Examples for handling non media files. 
 
 An [attachmentAsset](https://developer.kaltura.com/console/service/attachmentAsset) associates a file with an existing [mediaEntry](https://developer.kaltura.com/console/service/media)
@@ -206,7 +206,55 @@ Finally, the`dataEntry` is associated with the file uploaded previously and stor
         });
 ```
 
-The example displays the json returned by data.addContent 
+The example displays the json returned by [data.addContent](https://developer.kaltura.com/console/service/data/action/addContent) :
+
+```
+{
+  "dataContent": "lkajsldjkalkjd 10923019283\n",
+  "retrieveDataContentByGet": 1,
+  "id": "1_foayvsc5",
+  "partnerId": 12345,
+  "userId": "",
+  "creatorId": "",
+  "status": 2,
+  "moderationStatus": 6,
+  "moderationCount": 0,
+  "type": 6,
+  "createdAt": 1627520973,
+  "updatedAt": 1627520973,
+  "rank": 0,
+  "totalRank": 0,
+  "votes": 0,
+  "downloadUrl": "https://cfvod.kaltura.com/p/12345/sp/12345/raw/entry_id/1_foayvsc5/version/100001",
+  "searchText": "_PAR_ONLY_ _3033241_ _MEDIA_TYPE_-1|  ",
+  "version": "100001",
+  "thumbnailUrl": "https://cfvod.kaltura.com/p/12345/sp/12345/thumbnail/entry_id/1_foayvsc5/version/0",
+  "accessControlId": 3557861,
+  "replacementStatus": 0,
+  "partnerSortValue": 0,
+  "rootEntryId": "1_foayvsc5",
+  "operationAttributes": [],
+  "entitledUsersEdit": "",
+  "entitledUsersPublish": "",
+  "entitledUsersView": "",
+  "capabilities": "",
+  "displayInSearch": 1,
+  "blockAutoTranscript": false,
+  "objectType": "KalturaDataEntry"
+}
+```
+
+At this point, you may want to [serve](https://developer.kaltura.com/console/service/data/action/serve) the asset directly, or [list](https://developer.kaltura.com/console/service/data/action/list) all of the assets for a given `dataEntry` 
+
+Here is the [full list](https://developer.kaltura.com/console/service/data) of api calls related to `dataEntry`
+
+- [data.add](https://developer.kaltura.com/console/service/data/action/add)
+- [data.addContent](https://developer.kaltura.com/console/service/data/action/addContent)
+- [data.delete](https://developer.kaltura.com/console/service/data/action/delete)
+- [data.get](https://developer.kaltura.com/console/service/data/action/get)
+- [data.list](https://developer.kaltura.com/console/service/data/action/list)
+- [data.serve](https://developer.kaltura.com/console/service/data/action/serve)
+- [data.update](https://developer.kaltura.com/console/service/data/action/update)
 
 # How you can help (guidelines for contributors) 
 
